@@ -1,9 +1,12 @@
-function App() {
+import { RecoilRoot } from "recoil";
+import Navbar from "./components/Navbar";
+
+const App = () => {
   return (
-    <>
-      <div>A very cool todo-app</div>
-    </>
+    <RecoilRoot>
+      <Navbar />
+    </RecoilRoot>
   );
-}
+};
 
 export default App;
