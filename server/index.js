@@ -19,7 +19,7 @@ app.use(
 
 app.use(express.json());
 
-app.use("/api/v1", userRouter);
+app.use("/api/v1/user", userRouter);
 
 // Global-catch
 app.use((err, req, res, next) => {

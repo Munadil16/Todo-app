@@ -1,14 +1,10 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
+import { navbarHeightAtom } from "../store/atoms/navbarHeight";
 
 const Home = () => {
-  const [navbarHeight, setNavbarHeight] = useState(0);
+  const navbarHeight = useRecoilValue(navbarHeightAtom);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const navbar = document.querySelector("nav").offsetHeight;
-    setNavbarHeight(navbar);
-  }, []);
 
   return (
     <div
