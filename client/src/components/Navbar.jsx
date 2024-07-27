@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { useNavigate } from "react-router-dom";
 import { authenticateAtom } from "../store/atoms/authenticate.js";
@@ -9,10 +9,12 @@ const Navbar = () => {
   const [authenticate, setAuthenticate] = useRecoilState(authenticateAtom);
   const setNavbarHeight = useSetRecoilState(navbarHeightAtom);
   const navigate = useNavigate();
+  const menuItemsRef = useRef();
+  const navBarRef = useRef();
   const userName = localStorage.getItem("userName");
 
   const toggleMenu = () => {
-    document.querySelector("#menu-items").classList.toggle("invisible");
+    menuItemsRef.current.classList.toggle("invisible");
     document.body.classList.toggle("overflow-hidden");
   };
 
@@ -29,13 +31,16 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    const navbarHeight = document.querySelector("nav").offsetHeight;
+    const navbarHeight = navBarRef.current.offsetHeight;
     setNavbarHeight(navbarHeight);
   }, []);
 
   return (
     <>
-      <nav className="sticky top-0 z-1000 grid grid-cols-2 border-b-[1px] border-b-zinc-600 bg-white px-3 py-4 text-black sm:px-8 dark:bg-black dark:text-white">
+      <nav
+        ref={navBarRef}
+        className="sticky top-0 z-1000 grid grid-cols-2 border-b-[1px] border-b-zinc-600 bg-white px-3 py-4 text-black sm:px-8 dark:bg-black dark:text-white"
+      >
         <div className="flex items-center gap-4">
           <img className="w-7" src={logo} alt="Logo" />
           <button
@@ -77,7 +82,7 @@ const Navbar = () => {
       </nav>
 
       {/* Menubar Items */}
-      <div id="menu-items" className="invisible sm:flex sm:justify-end">
+      <div ref={menuItemsRef} className="invisible sm:flex sm:justify-end">
         <ul className="fixed flex h-screen w-screen flex-col gap-4 border-neutral-300 bg-white px-2 py-3 text-2xl text-black shadow-md sm:mr-8 sm:mt-2 sm:h-fit sm:w-fit sm:gap-1 sm:rounded-lg sm:border sm:text-base dark:border-neutral-700 dark:bg-black dark:text-white">
           <li
             className="cursor-pointer select-none rounded-lg py-2 pl-8 pr-12 hover:bg-zinc-200 sm:pl-2 dark:hover:bg-zinc-800"

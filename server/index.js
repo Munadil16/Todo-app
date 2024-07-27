@@ -4,6 +4,7 @@ import cors from "cors";
 
 import connectDb from "./db/index.js";
 import userRouter from "./routes/user.js";
+import todosRouter from "./routes/todos.js";
 
 dotenv.config();
 connectDb();
@@ -20,6 +21,8 @@ app.use(
 app.use(express.json());
 
 app.use("/api/v1/user", userRouter);
+
+app.use("/api/v1/todo", todosRouter);
 
 // Global-catch
 app.use((err, req, res, next) => {

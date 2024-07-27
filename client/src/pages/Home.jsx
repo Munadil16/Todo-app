@@ -35,6 +35,7 @@ const Home = () => {
           onClick={() => navigate("/login")}
         >
           Get Started
+          {/* dont go login when loggedin */}
         </button>
       </div>
     </div>
