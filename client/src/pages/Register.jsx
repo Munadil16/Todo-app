@@ -45,13 +45,11 @@ const Register = () => {
 
   return (
     <>
-      {errorStatus ? (
+      {errorStatus && (
         <DisplayError
           setErrorStatus={setErrorStatus}
           errorMessage={errorMessage}
         />
-      ) : (
-        <></>
       )}
 
       <div

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { Link, useNavigate } from "react-router-dom";
 import { navbarHeightAtom } from "../store/atoms/navbarHeight.js";
-import { authenticateAtom } from "../store/atoms/authenticate.js";
+import { authorizeAtom } from "../store/atoms/authorize.js";
 import DisplayError from "../components/DisplayError.jsx";
 import InputBox from "../components/InputBox.jsx";
 import Button from "../components/Button.jsx";
@@ -17,7 +17,7 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navbarHeight = useRecoilValue(navbarHeightAtom);
-  const setAuthenticate = useSetRecoilState(authenticateAtom);
+  const setAuthorize = useSetRecoilState(authorizeAtom);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,7 +34,7 @@ const Login = () => {
         localStorage.setItem("userName", res.data.name);
         setTimeout(() => {
           navigate("/user/todos");
-          setAuthenticate(true);
+          setAuthorize(true);
         }, 2000);
       }
     } catch (err) {
@@ -58,8 +58,8 @@ const Login = () => {
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("userName", res.data.name);
         setTimeout(() => {
-          navigate("/");
-          setAuthenticate(true);
+          navigate("/user/todos");
+          setAuthorize(true);
         }, 2000);
       }
     } catch (err) {
@@ -69,13 +69,11 @@ const Login = () => {
 
   return (
     <>
-      {errorStatus ? (
+      {errorStatus && (
         <DisplayError
           setErrorStatus={setErrorStatus}
           errorMessage={errorMessage}
         />
-      ) : (
-        <></>
       )}
 
       <div

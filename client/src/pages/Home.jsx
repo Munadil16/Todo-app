@@ -1,8 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
-import { navbarHeightAtom } from "../store/atoms/navbarHeight";
+import { navbarHeightAtom } from "../store/atoms/navbarHeight.js";
+import { authorizeAtom } from "../store/atoms/authorize.js";
 
 const Home = () => {
+  const isAuthorized = useRecoilValue(authorizeAtom);
   const navbarHeight = useRecoilValue(navbarHeightAtom);
   const navigate = useNavigate();
 
@@ -32,10 +34,11 @@ const Home = () => {
         <button
           className="rounded-full border border-stone-800 bg-neutral-100 px-5 py-3 font-medium hover:bg-neutral-50 dark:bg-neutral-950 dark:hover:bg-neutral-900"
           type="button"
-          onClick={() => navigate("/login")}
+          onClick={() =>
+            isAuthorized ? navigate("/user/todos") : navigate("/login")
+          }
         >
           Get Started
-          {/* dont go login when loggedin */}
         </button>
       </div>
     </div>

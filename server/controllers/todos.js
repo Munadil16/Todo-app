@@ -32,7 +32,15 @@ const addTodo = async (req, res) => {
       await userTodos.save();
     }
 
-    return res.status(201).json({ msg: "Todo added", success: true });
+    const populatedTodos = await Todo.findOne({
+      createdBy: req.userId,
+    }).populate("subTodo");
+
+    return res.status(201).json({
+      msg: "Todo added",
+      success: true,
+      todos: populatedTodos.subTodo,
+    });
   } catch (error) {
     console.log("Error while adding todo: ", error);
     return res
@@ -48,7 +56,9 @@ const retrieveTodos = async (req, res) => {
     }).populate("subTodo");
 
     if (!userTodos || userTodos.length === 0) {
-      return res.status(404).json({ msg: "Todo not found", success: false });
+      return res
+        .status(200)
+        .json({ msg: "Todo not found", success: false, todos: [] });
     }
 
     return res
@@ -77,7 +87,13 @@ const updateTodo = async (req, res) => {
       priority,
     });
 
-    return res.status(200).json({ msg: "Todo updated", success: true });
+    const userTodos = await Todo.findOne({
+      createdBy: req.userId,
+    }).populate("subTodo");
+
+    return res
+      .status(200)
+      .json({ msg: "Todo updated", success: true, todos: userTodos.subTodo });
   } catch (error) {
     console.log("Error while updating todo: ", error);
     return res
@@ -92,9 +108,15 @@ const markAsCompleteTodo = async (req, res) => {
       completed: true,
     });
 
-    return res
-      .status(200)
-      .json({ msg: "Todo marked as complete", success: true });
+    const userTodos = await Todo.findOne({
+      createdBy: req.userId,
+    }).populate("subTodo");
+
+    return res.status(200).json({
+      msg: "Todo marked as complete",
+      success: true,
+      todos: userTodos.subTodo,
+    });
   } catch (error) {
     console.log("Error while marking todo as complete: ", error);
     return res
@@ -104,9 +126,28 @@ const markAsCompleteTodo = async (req, res) => {
 };
 
 const deleteTodo = async (req, res) => {
+  const id = req.params.todoId;
+
   try {
-    await SubTodo.findByIdAndDelete(req.params.todoId);
-    return res.status(200).json({ msg: "Todo deleted", success: true });
+    const userTodos = await Todo.findOne({
+      createdBy: req.userId,
+    });
+
+    userTodos.subTodo = userTodos.subTodo.filter((todo) => !todo.equals(id));
+    await userTodos.save();
+    await SubTodo.findByIdAndDelete(id);
+
+    const populatedTodos = await Todo.findOne({
+      createdBy: req.userId,
+    }).populate("subTodo");
+
+    return res
+      .status(200)
+      .json({
+        msg: "Todo deleted",
+        success: true,
+        todos: populatedTodos.subTodo,
+      });
   } catch (error) {
     console.log("Error while deleting a todo: ", error);
     return res

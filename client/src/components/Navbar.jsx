@@ -1,12 +1,12 @@
 import { useEffect, useRef } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { useNavigate } from "react-router-dom";
-import { authenticateAtom } from "../store/atoms/authenticate.js";
+import { authorizeAtom } from "../store/atoms/authorize.js";
 import { navbarHeightAtom } from "../store/atoms/navbarHeight.js";
 import logo from "../assets/images/logo.webp";
 
 const Navbar = () => {
-  const [authenticate, setAuthenticate] = useRecoilState(authenticateAtom);
+  const [authorize, setAuthorize] = useRecoilState(authorizeAtom);
   const setNavbarHeight = useSetRecoilState(navbarHeightAtom);
   const navigate = useNavigate();
   const menuItemsRef = useRef();
@@ -26,7 +26,7 @@ const Navbar = () => {
     const isTokenAvailable = localStorage.getItem("token");
 
     if (isTokenAvailable) {
-      setAuthenticate(true);
+      setAuthorize(true);
     }
   }, []);
 
@@ -39,7 +39,7 @@ const Navbar = () => {
     <>
       <nav
         ref={navBarRef}
-        className="sticky top-0 z-1000 grid grid-cols-2 border-b-[1px] border-b-zinc-600 bg-white px-3 py-4 text-black sm:px-8 dark:bg-black dark:text-white"
+        className="sticky top-0 z-[1000] grid grid-cols-2 border-b-[1px] border-b-zinc-600 bg-white px-3 py-4 text-black sm:px-8 dark:bg-black dark:text-white"
       >
         <div className="flex items-center gap-4">
           <img className="w-7" src={logo} alt="Logo" />
@@ -52,7 +52,7 @@ const Navbar = () => {
           </button>
         </div>
 
-        {authenticate ? (
+        {authorize ? (
           <div className="flex justify-end">
             <p
               className="cursor-pointer select-none rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 px-4 py-2 font-medium text-white"
@@ -98,7 +98,7 @@ const Navbar = () => {
             onClick={() => {
               localStorage.removeItem("token");
               localStorage.removeItem("userName");
-              setAuthenticate(false);
+              setAuthorize(false);
               toggleMenu();
               navigate("/");
             }}
