@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { Link, useNavigate } from "react-router-dom";
+import { useRecoilValue, useRecoilState } from "recoil";
+import { Link, useNavigate, Navigate } from "react-router-dom";
 import { navbarHeightAtom } from "../store/atoms/navbarHeight.js";
 import { authorizeAtom } from "../store/atoms/authorize.js";
 import DisplayError from "../components/DisplayError.jsx";
@@ -17,16 +17,19 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navbarHeight = useRecoilValue(navbarHeightAtom);
-  const setAuthorize = useSetRecoilState(authorizeAtom);
+  const [isAuthorized, setIsAuthorized] = useRecoilState(authorizeAtom);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("/api/v1/user/login", {
-        email,
-        password,
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/v1/user/login`,
+        {
+          email,
+          password,
+        }
+      );
 
       if (res.data.success) {
         setLoading(true);
@@ -34,7 +37,7 @@ const Login = () => {
         localStorage.setItem("userName", res.data.name);
         setTimeout(() => {
           navigate("/user/todos");
-          setAuthorize(true);
+          setIsAuthorized(true);
         }, 2000);
       }
     } catch (err) {
@@ -48,10 +51,13 @@ const Login = () => {
 
   const testUserLogin = async () => {
     try {
-      const res = await axios.post("/api/v1/user/login", {
-        email: "testuser@gmail.com",
-        password: "test123",
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/v1/user/login`,
+        {
+          email: "testuser@gmail.com",
+          password: "test123",
+        }
+      );
 
       if (res.data.success) {
         setLoading(true);
@@ -59,13 +65,17 @@ const Login = () => {
         localStorage.setItem("userName", res.data.name);
         setTimeout(() => {
           navigate("/user/todos");
-          setAuthorize(true);
+          setIsAuthorized(true);
         }, 2000);
       }
     } catch (err) {
       console.log(err);
     }
   };
+
+  if (isAuthorized) {
+    return <Navigate to="/user/todos" />;
+  }
 
   return (
     <>

@@ -21,7 +21,7 @@ const AddTodo = () => {
 
     try {
       const res = await axios.post(
-        "/api/v1/todo/add-todo",
+        `${import.meta.env.VITE_BASE_URL}/api/v1/todo/add-todo`,
         { title, priority },
         { headers: { Authorization: `Bearer ${token}` } }
       );

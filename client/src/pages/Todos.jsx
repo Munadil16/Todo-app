@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useRecoilValueLoadable } from "recoil";
+import { Navigate } from "react-router-dom";
 import { todosAtom } from "../store/atoms/todos.js";
 import { navbarHeightAtom } from "../store/atoms/navbarHeight.js";
+import { authorizeAtom } from "../store/atoms/authorize.js";
 import AddTodo from "../components/AddTodo.jsx";
 import TodoBox from "../components/TodoBox.jsx";
 import Loader from "../components/Loader.jsx";
@@ -9,6 +11,7 @@ import Loader from "../components/Loader.jsx";
 const Todos = () => {
   const todos = useRecoilValueLoadable(todosAtom);
   const navbarHeight = useRecoilValueLoadable(navbarHeightAtom);
+  const isAuthorized = useRecoilValueLoadable(authorizeAtom);
   const [incompleteTodos, setIncompleteTodos] = useState([]);
   const [completedTodos, setCompletedTodos] = useState([]);
 
@@ -18,6 +21,10 @@ const Todos = () => {
       setCompletedTodos(todos.contents.filter((todo) => todo.completed));
     }
   }, [todos]);
+
+  if (!isAuthorized.contents) {
+    return <Navigate to="/login" />;
+  }
 
   return (
     <div

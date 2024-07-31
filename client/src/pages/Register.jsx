@@ -1,8 +1,9 @@
 import axios from "axios";
 import { useState } from "react";
 import { useRecoilValue } from "recoil";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, Navigate } from "react-router-dom";
 import { navbarHeightAtom } from "../store/atoms/navbarHeight.js";
+import { authorizeAtom } from "../store/atoms/authorize.js";
 import DisplayError from "../components/DisplayError.jsx";
 import InputBox from "../components/InputBox.jsx";
 import Button from "../components/Button.jsx";
@@ -17,16 +18,20 @@ const Register = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navbarHeight = useRecoilValue(navbarHeightAtom);
+  const isAuthorized = useRecoilValue(authorizeAtom);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("/api/v1/user/register", {
-        email,
-        userName,
-        password,
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/v1/user/register`,
+        {
+          email,
+          userName,
+          password,
+        }
+      );
 
       if (res.data.success) {
         setLoading(true);
@@ -42,6 +47,10 @@ const Register = () => {
       }
     }
   };
+
+  if (isAuthorized) {
+    return <Navigate to="/user/todos" />;
+  }
 
   return (
     <>

@@ -34,7 +34,7 @@ const TodoBox = ({ id, title, priority, completed }) => {
   const handleSave = async () => {
     try {
       const res = await axios.put(
-        `/api/v1/todo/update-todo/${id}`,
+        `${import.meta.env.VITE_BASE_URL}/api/v1/todo/update-todo/${id}`,
         {
           title: todoTitle,
           priority,
@@ -59,7 +59,7 @@ const TodoBox = ({ id, title, priority, completed }) => {
   const handleComplete = async () => {
     try {
       const res = await axios.patch(
-        "/api/v1/todo/complete-todo",
+        `${import.meta.env.VITE_BASE_URL}/api/v1/todo/complete-todo`,
         {
           todoId: id,
         },
@@ -80,9 +80,12 @@ const TodoBox = ({ id, title, priority, completed }) => {
 
   const handleDelete = async () => {
     try {
-      const res = await axios.delete(`/api/v1/todo/delete-todo/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.delete(
+        `${import.meta.env.VITE_BASE_URL}/api/v1/todo/delete-todo/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       if (res.data.success) {
         setTodosAtom(res.data.todos);
