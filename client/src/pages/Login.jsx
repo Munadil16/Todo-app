@@ -49,29 +49,29 @@ const Login = () => {
     }
   };
 
-  const testUserLogin = async () => {
-    try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/api/v1/user/login`,
-        {
-          email: "testuser@gmail.com",
-          password: "test123",
-        }
-      );
+  // const testUserLogin = async () => {
+  //   try {
+  //     const res = await axios.post(
+  //       `${import.meta.env.VITE_BASE_URL}/api/v1/user/login`,
+  //       {
+  //         email: "testuser@gmail.com",
+  //         password: "test123",
+  //       }
+  //     );
 
-      if (res.data.success) {
-        setLoading(true);
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("userName", res.data.name);
-        setTimeout(() => {
-          navigate("/user/todos");
-          setIsAuthorized(true);
-        }, 2000);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  //     if (res.data.success) {
+  //       setLoading(true);
+  //       localStorage.setItem("token", res.data.token);
+  //       localStorage.setItem("userName", res.data.name);
+  //       setTimeout(() => {
+  //         navigate("/user/todos");
+  //         setIsAuthorized(true);
+  //       }, 2000);
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   if (isAuthorized) {
     return <Navigate to="/user/todos" />;
@@ -137,7 +137,12 @@ const Login = () => {
             </Link>
           </p>
 
-          <p className="mt-3 w-[20rem] text-center text-black dark:text-white">
+          {/**
+           * The below login button is only used for
+           * development purpose to quickly login.
+           */}
+
+          {/* <p className="mt-3 w-[20rem] text-center text-black dark:text-white">
             Login as a test user?{" "}
             <button
               className="text-[#0A66C2] underline"
@@ -146,7 +151,7 @@ const Login = () => {
             >
               Login
             </button>
-          </p>
+          </p> */}
         </form>
       </div>
     </>

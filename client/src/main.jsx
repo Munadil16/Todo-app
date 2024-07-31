@@ -2,6 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { RecoilRoot } from "recoil";
+import { inject } from "@vercel/analytics";
+
+inject();
 
 import "./index.css";
 import App from "./App.jsx";
