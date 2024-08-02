@@ -1,14 +1,20 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { User } from "../models/user.js";
-import { createUserSchema, loginUserSchema } from "../schemas/userSchemas.js";
+import {
+  createUserSchema,
+  loginUserSchema,
+  updateUserSchema,
+} from "../schemas/userSchemas.js";
 
 const register = async (req, res) => {
-  const { success } = createUserSchema.safeParse(req.body);
+  const { success, error } = createUserSchema.safeParse(req.body);
   const saltRounds = 10;
 
   if (!success) {
-    return res.status(400).json({ msg: "Invalid inputs", success: false });
+    return res
+      .status(400)
+      .json({ msg: error.issues[0].message, success: false });
   }
 
   try {
@@ -40,10 +46,12 @@ const register = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const { success } = loginUserSchema.safeParse(req.body);
+  const { success, error } = loginUserSchema.safeParse(req.body);
 
   if (!success) {
-    return res.status(400).json({ msg: "Invalid inputs", success: false });
+    return res
+      .status(400)
+      .json({ msg: error.issues[0].message, success: false });
   }
 
   try {
@@ -84,4 +92,71 @@ const login = async (req, res) => {
   }
 };
 
-export { login, register };
+const getUserDetails = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId)?.select("-password -_id");
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found", success: false });
+    }
+
+    return res
+      .status(200)
+      .json({ msg: "User details retrieved", success: true, details: user });
+  } catch (error) {
+    console.log("Error while retrieving user details: ", error);
+    return res
+      .status(500)
+      .json({ msg: "Internal server error", success: false });
+  }
+};
+
+const updateUserDetails = async (req, res) => {
+  const { success, error } = updateUserSchema.safeParse(req.body);
+
+  if (!success) {
+    return res
+      .status(400)
+      .json({ msg: error.issues[0].message, success: false });
+  }
+
+  const { email, userName, password } = req.body;
+  const saltRounds = 10;
+
+  try {
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser && !(existingUser._id.toString() === req.userId)) {
+      return res
+        .status(409)
+        .json({ msg: "User with this email already exists", success: false });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.userId,
+      { email, userName, password: hashedPassword },
+      { new: true }
+    );
+
+    const token = jwt.sign(
+      { id: updatedUser._id, name: updatedUser.userName },
+      process.env.ACCESS_TOKEN_SECRET
+    );
+
+    return res.status(200).json({
+      msg: "User details updated",
+      success: true,
+      token,
+      name: updatedUser.userName,
+    });
+  } catch (error) {
+    console.log("Error while updating user details: ", error);
+    return res
+      .status(500)
+      .json({ msg: "Internal server error while user login", success: false });
+  }
+};
+
+export { login, register, getUserDetails, updateUserDetails };

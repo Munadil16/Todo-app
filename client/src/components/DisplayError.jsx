@@ -12,7 +12,7 @@ const DisplayError = ({ setErrorStatus, errorMessage }) => {
       // To show animation
       setTimeout(() => {
         setErrorStatus(false);
-      }, 1250);
+      }, 500);
     }, 3000);
 
     return () => clearTimeout(timeout);

@@ -14,8 +14,8 @@ export default {
         },
       },
       animation: {
-        errorAnimateDown: "errorAnimateDown 1.25s ease-in-out forwards",
-        errorAnimateUp: "errorAnimateUp 1.25s ease-in-out forwards",
+        errorAnimateDown: "errorAnimateDown 0.5s ease-in-out forwards",
+        errorAnimateUp: "errorAnimateUp 0.5s ease-in-out forwards",
       },
     },
   },

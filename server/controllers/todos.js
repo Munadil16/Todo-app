@@ -3,10 +3,12 @@ import { SubTodo } from "../models/subTodo.js";
 import { todoSchema } from "../schemas/todoSchemas.js";
 
 const addTodo = async (req, res) => {
-  const { success } = todoSchema.safeParse(req.body);
+  const { success, error } = todoSchema.safeParse(req.body);
 
   if (!success) {
-    return res.status(400).json({ msg: "Invalid data", success: false });
+    return res
+      .status(400)
+      .json({ msg: error.issues[0].message, success: false });
   }
 
   const { title, priority } = req.body;
@@ -73,10 +75,12 @@ const retrieveTodos = async (req, res) => {
 };
 
 const updateTodo = async (req, res) => {
-  const { success } = todoSchema.safeParse(req.body);
+  const { success, error } = todoSchema.safeParse(req.body);
 
   if (!success) {
-    return res.status(400).json({ msg: "Invalid data", success: false });
+    return res
+      .status(400)
+      .json({ msg: error.issues[0].message, success: false });
   }
 
   const { title, priority } = req.body;
@@ -141,13 +145,11 @@ const deleteTodo = async (req, res) => {
       createdBy: req.userId,
     }).populate("subTodo");
 
-    return res
-      .status(200)
-      .json({
-        msg: "Todo deleted",
-        success: true,
-        todos: populatedTodos.subTodo,
-      });
+    return res.status(200).json({
+      msg: "Todo deleted",
+      success: true,
+      todos: populatedTodos.subTodo,
+    });
   } catch (error) {
     console.log("Error while deleting a todo: ", error);
     return res

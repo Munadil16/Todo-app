@@ -20,6 +20,12 @@ app.use(
 
 app.use(express.json());
 
+// Dummy endpoint to wake up the server
+// while spin down time...
+app.get("/api/wake-up", (req, res) => {
+  res.status(200).json({ msg: "Server is awake", success: true });
+});
+
 app.use("/api/v1/user", userRouter);
 
 app.use("/api/v1/todo", todosRouter);

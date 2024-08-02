@@ -7,6 +7,7 @@ import { authorizeAtom } from "../store/atoms/authorize.js";
 import DisplayError from "../components/DisplayError.jsx";
 import InputBox from "../components/InputBox.jsx";
 import Button from "../components/Button.jsx";
+import Loader from "../components/Loader.jsx";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const res = await axios.post(
@@ -32,46 +34,21 @@ const Login = () => {
       );
 
       if (res.data.success) {
-        setLoading(true);
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("userName", res.data.name);
-        setTimeout(() => {
-          navigate("/user/todos");
-          setIsAuthorized(true);
-        }, 2000);
+        navigate("/user/todos");
+        setIsAuthorized(true);
+        setLoading(false);
       }
     } catch (err) {
       const { success, msg } = err.response.data;
       if (!success) {
+        setLoading(false);
         setErrorStatus(true);
         setErrorMessage(msg);
       }
     }
   };
-
-  // const testUserLogin = async () => {
-  //   try {
-  //     const res = await axios.post(
-  //       `${import.meta.env.VITE_BASE_URL}/api/v1/user/login`,
-  //       {
-  //         email: "testuser@gmail.com",
-  //         password: "test123",
-  //       }
-  //     );
-
-  //     if (res.data.success) {
-  //       setLoading(true);
-  //       localStorage.setItem("token", res.data.token);
-  //       localStorage.setItem("userName", res.data.name);
-  //       setTimeout(() => {
-  //         navigate("/user/todos");
-  //         setIsAuthorized(true);
-  //       }, 2000);
-  //     }
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
 
   if (isAuthorized) {
     return <Navigate to="/user/todos" />;
@@ -128,31 +105,17 @@ const Login = () => {
             </button>
           </InputBox>
 
-          <Button content={loading ? "Loading..." : "Login"} />
+          <Button content={"Login"} />
 
-          <p className="mt-6 w-[20rem] text-center text-black dark:text-white">
+          <p className="my-6 w-[20rem] text-center text-black dark:text-white">
             Don't have an account?{" "}
             <Link className="text-[#0A66C2] underline" to="/register">
               Register
             </Link>
           </p>
-
-          {/**
-           * The below login button is only used for
-           * development purpose to quickly login.
-           */}
-
-          {/* <p className="mt-3 w-[20rem] text-center text-black dark:text-white">
-            Login as a test user?{" "}
-            <button
-              className="text-[#0A66C2] underline"
-              onClick={testUserLogin}
-              type="button"
-            >
-              Login
-            </button>
-          </p> */}
         </form>
+
+        {loading && <Loader />}
       </div>
     </>
   );

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRecoilValueLoadable } from "recoil";
 import { Navigate } from "react-router-dom";
 import { todosAtom } from "../store/atoms/todos.js";
@@ -14,6 +14,7 @@ const Todos = () => {
   const isAuthorized = useRecoilValueLoadable(authorizeAtom);
   const [incompleteTodos, setIncompleteTodos] = useState([]);
   const [completedTodos, setCompletedTodos] = useState([]);
+  const [sortByPriority, setSortByPriority] = useState("LESS");
 
   useEffect(() => {
     if (todos.state === "hasValue") {
@@ -21,6 +22,20 @@ const Todos = () => {
       setCompletedTodos(todos.contents.filter((todo) => todo.completed));
     }
   }, [todos]);
+
+  const priorityOrder = {
+    LESS: 1,
+    MEDIUM: 2,
+    HIGH: 3,
+  };
+
+  const sortedIncompleteTodos = useMemo(() => {
+    return [...incompleteTodos].sort((a, b) => {
+      return sortByPriority === "LESS"
+        ? priorityOrder[a.priority] - priorityOrder[b.priority]
+        : priorityOrder[b.priority] - priorityOrder[a.priority];
+    });
+  }, [incompleteTodos, sortByPriority, priorityOrder]);
 
   if (!isAuthorized.contents) {
     return <Navigate to="/login" />;
@@ -32,13 +47,14 @@ const Todos = () => {
       className="grid lg:grid-cols-2 bg-white text-black dark:bg-black dark:text-white"
     >
       <div className="flex flex-col items-center">
-        <AddTodo />
-
-        {/* Implement a Filter / Sort todos Component */}
+        <AddTodo
+          sortByPriority={sortByPriority}
+          setSortByPriority={setSortByPriority}
+        />
       </div>
 
       <div className="flex flex-col items-center gap-6 mb-4">
-        <h1 className="font-medium text-2xl mt-4">Todo List</h1>
+        <h1 className="font-medium text-2xl mt-10">Todo List</h1>
 
         {todos.state === "loading" && <Loader />}
 
@@ -48,15 +64,17 @@ const Todos = () => {
 
         {todos.state === "hasValue" && (
           <>
-            {incompleteTodos.map(({ _id, title, priority, completed }) => (
-              <TodoBox
-                key={_id}
-                id={_id}
-                title={title}
-                priority={priority}
-                completed={completed}
-              />
-            ))}
+            {sortedIncompleteTodos.map(
+              ({ _id, title, priority, completed }) => (
+                <TodoBox
+                  key={_id}
+                  id={_id}
+                  title={title}
+                  priority={priority}
+                  completed={completed}
+                />
+              )
+            )}
 
             {completedTodos.map(({ _id, title, priority, completed }) => (
               <TodoBox

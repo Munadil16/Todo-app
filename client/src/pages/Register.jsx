@@ -7,6 +7,7 @@ import { authorizeAtom } from "../store/atoms/authorize.js";
 import DisplayError from "../components/DisplayError.jsx";
 import InputBox from "../components/InputBox.jsx";
 import Button from "../components/Button.jsx";
+import Loader from "../components/Loader.jsx";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const res = await axios.post(
@@ -34,14 +36,13 @@ const Register = () => {
       );
 
       if (res.data.success) {
-        setLoading(true);
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
+        setLoading(false);
+        navigate("/login");
       }
     } catch (err) {
       const { success, msg } = err.response.data;
       if (!success) {
+        setLoading(false);
         setErrorStatus(true);
         setErrorMessage(msg);
       }
@@ -109,15 +110,17 @@ const Register = () => {
             </button>
           </InputBox>
 
-          <Button content={loading ? "Loading..." : "Create an account"} />
+          <Button content={"Create an account"} />
 
-          <p className="mt-6 w-[20rem] text-center text-black dark:text-white">
+          <p className="my-6 w-[20rem] text-center text-black dark:text-white">
             Already have an account?{" "}
             <Link className="text-[#0A66C2] underline" to="/login">
               Login
             </Link>
           </p>
         </form>
+
+        {loading && <Loader />}
       </div>
     </>
   );

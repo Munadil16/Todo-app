@@ -6,7 +6,7 @@ import { todosAtom } from "../store/atoms/todos.js";
 import Loader from "./Loader.jsx";
 import DisplayError from "./DisplayError.jsx";
 
-const AddTodo = () => {
+const AddTodo = ({ sortByPriority, setSortByPriority }) => {
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState("LESS");
   const [errorStatus, setErrorStatus] = useState(false);
@@ -96,6 +96,22 @@ const AddTodo = () => {
 
           {isLoading ? <Loader /> : <></>}
         </form>
+
+        {/* Sort todos based on priority */}
+        <div className="lg:fixed flex flex-col mt-6">
+          <label className="text-lg" htmlFor="sortByPriority">
+            Sort by Priority
+          </label>
+          <select
+            className="outline-none border-[1px] border-neutral-800 rounded-md w-[70vw] sm:w-[40vw] md:w-[35vw] lg:w-[25vw] xl:w-[20vw] p-2 mt-2 text-black bg-white dark:text-white dark:bg-black"
+            id="sortByPriority"
+            value={sortByPriority}
+            onChange={(e) => setSortByPriority(e.target.value)}
+          >
+            <option value="LESS">Less to High</option>
+            <option value="HIGH">High to Less</option>
+          </select>
+        </div>
       </div>
     </>
   );
