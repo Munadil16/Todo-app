@@ -25,7 +25,7 @@ A TODO application built using the MERN stack, with JWT for user authentication,
 1. **Clone the repository:**
 
 ```bash
-  git clone https://github.com/Munadil16/Todo-app.git
+  git clone "your_forked_repo_path"
   cd Todo-app
 ```
 

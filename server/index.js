@@ -20,12 +20,6 @@ app.use(
 
 app.use(express.json());
 
-// Dummy endpoint to wake up the server
-// while spin down time...
-app.get("/api/wake-up", (req, res) => {
-  res.status(200).json({ msg: "Server is awake", success: true });
-});
-
 app.use("/api/v1/user", userRouter);
 
 app.use("/api/v1/todo", todosRouter);
@@ -33,7 +27,7 @@ app.use("/api/v1/todo", todosRouter);
 // Global-catch
 app.use((err, req, res, next) => {
   console.log(err.stack);
-  res.status(500).json({ msg: "Internal Server Error!" });
+  res.status(500).json({ msg: "Internal server error" });
 });
 
 app.listen(PORT, () => {

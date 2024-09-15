@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { navbarHeightAtom } from "../store/atoms/navbarHeight.js";
@@ -9,23 +8,11 @@ const Home = () => {
   const navbarHeight = useRecoilValue(navbarHeightAtom);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Sending a dummy request for waking up the server
-    fetch(`${import.meta.env.VITE_BASE_URL}/api/wake-up`)
-      .then((r) => r.json())
-      .then((d) => console.log(d.msg));
-  }, []);
-
   return (
     <div
       style={{ height: `calc(100dvh - ${navbarHeight}px)` }}
       className="flex flex-col items-center justify-center gap-14 bg-white text-black dark:bg-black dark:text-white"
     >
-      {/* Production Server */}
-      <p className="min-w-72 lg:max-w-[30rem] absolute top-20 left-1/2 -translate-x-1/2 bg-[#ff3535] p-2 text-sm text-white text-center rounded-lg">
-        Warning: The server may be starting and can take up to 2 minutes!
-      </p>
-
       <p className="w-[85vw] text-center text-[2.5rem] font-semibold leading-[3.1rem] sm:w-[50vw] sm:text-5xl">
         Organize tasks, set{" "}
         <span className="bg-gradient-to-b from-[#a013ff] to-[#aa43ff] bg-clip-text text-transparent">
